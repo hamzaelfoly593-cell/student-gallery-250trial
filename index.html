@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صناع الإنجاز</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: #0b1220;
+  color: #fff;
+  font-family: Tahoma, Arial, sans-serif;
+}
+
+.container {
+  max-width: 950px;
+  margin: auto;
+}
+
+header {
+  padding: 30px 0;
+}
+
+.logo {
+  color: #d5b477;
+  font-size: 14px;
+  letter-spacing: 2px;
+}
+
+h1 {
+  font-size: 38px;
+  margin: 18px 0 10px;
+}
+
+.subtitle {
+  color: #a9b7ca;
+  line-height: 1.8;
+}
+
+.gold-line {
+  width: 65px;
+  height: 3px;
+  background: #d5b477;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.search {
+  width: 100%;
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid #35445b;
+  border-radius: 12px;
+  background: #111d2e;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+.counter {
+  color: #d5b477;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.students {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 13px;
+}
+
+.student {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px;
+  min-height: 110px;
+  background: #17263a;
+  border: 1px solid #35445b;
+  border-radius: 17px;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: .65s ease;
+}
+
+.student.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.student:hover {
+  border-color: #d5b477;
+}
+
+.avatar {
+  width: 75px;
+  height: 75px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: linear-gradient(145deg,#435a77,#26374d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  color: #f5dfb4;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.number {
+  color: #d5b477;
+  font-size: 10px;
+  direction: ltr;
+  text-align: right;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 9px 0 5px;
+}
+
+.desc {
+  font-size: 11px;
+  color: #a9b7ca;
+}
+
+footer {
+  text-align: center;
+  margin-top: 55px;
+  padding: 25px 0;
+  border-top: 1px solid #35445b;
+}
+
+.managed {
+  color: #c2ccda;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.watermark {
+  color: #718096;
+  font-size: 10px;
+  direction: ltr;
+  letter-spacing: 1px;
+}
+
+.watermark b {
+  color: #d5b477;
+}
+
+@media(max-width:600px) {
+  .students {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 31px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <div class="logo">✦ STUDENT GALLERY</div>
+
+  <h1>صُنّاع الإنجاز</h1>
+
+  <p class="subtitle">
+    نفخر بكل طالب شارك في هذا المشروع.
+    تعرّف على المشاركين في إنجازنا.
+  </p>
+
+  <div class="gold-line"></div>
+</header>
+
+<input
+  class="search"
+  id="search"
+  type="search"
+  placeholder="ابحث عن اسم الطالب..."
+>
+
+<div class="counter" id="counter">
+  250 طالب مشارك
+</div>
+
+<div class="students" id="students"></div>
+
+<footer>
+  <div class="managed">
+    Managed by <b>mis Mariam abdelqawy</b>
+  </div>
+
+  <div class="watermark">
+    Power by <b>hamza elfoly</b>
+  </div>
+</footer>
+
+</div>
+
+<script>
+
+const names = [
+"أحمد محمد",
+"محمد أحمد",
+"عمر خالد",
+"يوسف علي",
+"محمود حسن",
+"علي إبراهيم",
+"مصطفى محمود",
+"عبدالله أحمد",
+"زياد محمد",
+"آدم كريم",
+"حمزة علي",
+"مالك يوسف",
+"ياسين عمر",
+"أنس محمود",
+"إبراهيم خالد",
+"سلمى أحمد",
+"مريم محمد",
+"ملك أحمد",
+"جنى خالد",
+"ليلى محمود",
+"نور حسن",
+"آية محمد",
+"فرح أحمد",
+"سارة محمود",
+"رحمة أحمد"
+];
+
+const students = document.getElementById("students");
+
+function initials(name) {
+  return name.split(" ")
+    .slice(0,2)
+    .map(word => word[0])
+    .join("");
+}
+
+// إنشاء 250 طالب تجريبي
+for(let i = 1; i <= 250; i++) {
+
+  const name =
+    names[(i-1) % names.length] +
+    (i > names.length ? " " + Math.ceil(i/names.length) : "");
+
+  const card = document.createElement("div");
+
+  card.className = "student";
+
+  card.dataset.name =
+    (name + " " + i).toLowerCase();
+
+  card.innerHTML = `
+    <div class="info">
+      <div class="number">
+        STUDENT ${String(i).padStart(3,"0")}
+      </div>
+
+      <div class="name">${name}</div>
+
+      <div class="desc">
+        مشارك في المشروع
+      </div>
+    </div>
+
+    <div class="avatar">
+      ${initials(name)}
+    </div>
+  `;
+
+  students.appendChild(card);
+}
+
+// ظهور تدريجي عند التمرير
+const observer = new IntersectionObserver(entries => {
+
+  entries.forEach(entry => {
+
+    if(entry.isIntersecting) {
+
+      entry.target.classList.add("show");
+
+      observer.unobserve(entry.target);
+    }
+
+  });
+
+}, {
+  threshold: 0.1
+});
+
+document.querySelectorAll(".student")
+.forEach(card => observer.observe(card));
+
+// البحث عن الطلاب
+document.getElementById("search")
+.addEventListener("input", function() {
+
+  const value = this.value.toLowerCase().trim();
+
+  let count = 0;
+
+  document.querySelectorAll(".student")
+  .forEach(card => {
+
+    const match =
+      card.dataset.name.includes(value);
+
+    card.style.display = match ? "flex" : "none";
+
+    if(match) {
+      count++;
+      card.classList.add("show");
+    }
+
+  });
+
+  document.getElementById("counter")
+  .textContent = count + " طالب";
+
+});
+
+</script>
+
+</body>
+</html>
